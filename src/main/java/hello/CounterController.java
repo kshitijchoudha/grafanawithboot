@@ -34,13 +34,14 @@ public class CounterController {
 	private BigDecimal commitmentAmt = new BigDecimal(0.0);
 	private AtomicInteger atomicInteger = new AtomicInteger();
 
-	 List<CommitmentDto> commitment = new ArrayList<>();
+	 List<CommitmentDto> commitmentList = new ArrayList<>();
 	Counter commitmentAmtCounter;
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 	 public CounterController(MeterRegistry registry) {
-		 registry.gaugeCollectionSize("seller.commitment", Arrays.asList(Tag.of("sellernumber", "commitment.sellernumber")),commitment);
+		 registry.gaugeCollectionSize("seller.commitment", Arrays.asList(Tag.of("sellernumber", "commitment.sellernumber")),commitmentList);
 		// register a counter of questionable usefulness
-			commitmentAmtCounter = registry.counter("commitment.value");
+			commitmentAmtCounter = registry.counter("seller.commitment.total");
+			System.out.println("******** Counter Value "+commitmentAmtCounter.measure().iterator().next().getValue());
 			
 	 }
 	@Timed(value = "smp.commitments.posted", histogram = true, percentiles = { 0.95, 0.99 }, extraTags = { "version",
@@ -65,24 +66,26 @@ public class CounterController {
 	    @Timed(value = "smp.party.property", histogram = true, percentiles = { 0.95, 0.99 }, extraTags = { "version",
 		"v1" })
 	    public void property() throws IOException {
-	    	LOG.warn("Property does not have addressline");
+	    	logger.warn("Property does not have addressline");
 	    }
 	    
 	    @GetMapping(path ="/relationship")
 	    @Timed(value = "smp.seller.relationship", histogram = true, percentiles = { 0.95, 0.99 }, extraTags = { "version",
 		"v1" })
 	    public void relationship() throws IOException {
-	    	LOG.info("Relation does not have contacts");
+	    	logger.info("Relation does not have contacts");
 	    }
 	    @PostMapping("/commitment")
-	    @Timed(value = "seller.commitment", histogram = true, percentiles = { 0.95, 0.99 }, extraTags = { "version",
-		"v1" })
+	   
 	    public List<String> putPeople(@RequestBody CommitmentDto commitment) throws InterruptedException {
-	        int seconds2Sleep = SECURE_RANDOM.nextInt(1000);
-	        System.out.println(seconds2Sleep);
-	        commitmentAmt.add(commitment.getCommitmentValue());
-	        commitmentAmtCounter.increment(commitmentAmt.doubleValue());
-	        TimeUnit.MILLISECONDS.sleep(seconds2Sleep);
+	       
+	        commitmentList.add(commitment);
+	        BigDecimal result = commitmentAmt.add(commitment.getCommitmentValue());
+	        
+	        commitmentAmtCounter.increment(result.doubleValue());
+	        
+	       
+	      
 	        return Arrays.asList("Jim", "Tom", "Tim");
 	    }
 
