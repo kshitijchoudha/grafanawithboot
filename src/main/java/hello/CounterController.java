@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.slf4j.Logger;
@@ -32,9 +33,10 @@ public class CounterController {
 	private static final SecureRandom SECURE_RANDOM = new SecureRandom();
 	private BigDecimal commitmentAmt = new BigDecimal(0.0);
 	private AtomicInteger atomicInteger = new AtomicInteger();
+
 	 List<CommitmentDto> commitment = new ArrayList<>();
 	Counter commitmentAmtCounter;
-	Logger LOG = LoggerFactory.getLogger(CounterController.class);
+	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 	 public CounterController(MeterRegistry registry) {
 		 registry.gaugeCollectionSize("seller.commitment", Arrays.asList(Tag.of("sellernumber", "commitment.sellernumber")),commitment);
 		// register a counter of questionable usefulness
@@ -48,6 +50,7 @@ public class CounterController {
 	CounterDto dto = new CounterDto();
 	dto.setMessage(message);
 	dto.setCounter(atomicInteger.incrementAndGet());
+	logger.trace("This is a trace message");
 	dto.setTimestamp(System.currentTimeMillis());
 	return dto;
 	}
@@ -82,4 +85,19 @@ public class CounterController {
 	        TimeUnit.MILLISECONDS.sleep(seconds2Sleep);
 	        return Arrays.asList("Jim", "Tom", "Tim");
 	    }
+
+
+
+	@Timed(value = "get.log.prints", histogram = true, percentiles = { 0.95, 0.99 }, extraTags = { "version",
+			"v1" })
+	@GetMapping(path = "/printLogs")
+	public String printSomeLogs() {
+		logger.debug("This is a debug message");
+		logger.info("This is an info message");
+		logger.warn("This is a warn message");
+		logger.error("This is an error message");
+		return "Did some logging..";
+	}
+
+
 }
