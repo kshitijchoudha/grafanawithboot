@@ -55,6 +55,28 @@ public class CounterController {
 	dto.setTimestamp(System.currentTimeMillis());
 	return dto;
 	}
+	@Timed(value = "smp.servicer.allInFunding", histogram = true, percentiles = { 0.95, 0.99 }, extraTags = { "version",
+	"v1" })
+	@GetMapping(path = "/allinfunding")
+	public CounterDto getAllInFunding(@RequestParam("message") String message) {
+	CounterDto dto = new CounterDto();
+	dto.setMessage(message);
+	dto.setCounter(atomicInteger.incrementAndGet());
+	
+	dto.setTimestamp(System.currentTimeMillis());
+	return dto;
+	}
+	@Timed(value = "smp.servicer.srpholdback", histogram = true, percentiles = { 0.95, 0.99 }, extraTags = { "version",
+	"v1" })
+	@GetMapping(path = "/allinfunding")
+	public CounterDto getSrpHoldBack(@RequestParam("message") String message) {
+	CounterDto dto = new CounterDto();
+	dto.setMessage(message);
+	dto.setCounter(atomicInteger.incrementAndGet());
+	
+	dto.setTimestamp(System.currentTimeMillis());
+	return dto;
+	}
 	 @GetMapping(path="/asset")
 	 @Timed(value = "people.asset", histogram = true, percentiles = { 0.95, 0.99 }, extraTags = { "version",
 		"v1" })
