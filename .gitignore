@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 target/
 !.mvn/wrapper/maven-wrapper.jar
 
@@ -29,4 +28,3 @@ nbdist/
 .project
 .classpath
 /bin/
->>>>>>> 569963b53688085af1a7ab0e4ebc908cbda47423
