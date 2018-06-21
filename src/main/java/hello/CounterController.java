@@ -123,6 +123,7 @@ public class CounterController {
 		    bd = bd.setScale(2, RoundingMode.HALF_UP);
 		    amountToAdd = bd.doubleValue();
 			Metrics.counter("smp.sample.totalcommitment").increment(amountToAdd);
+			Metrics.counter("smp.sample.commitmentcount").increment(1);
 			return amountToAdd+"";
 		}
 
